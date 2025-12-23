@@ -20,10 +20,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize FastMCP server
-mcp = FastMCP(
-    name="task-manager",
-    version="1.0.0",
-)
+mcp = FastMCP(name="task-manager")
 
 # Initialize database manager
 db_manager = DatabaseManager("tasks.db")
@@ -403,7 +400,7 @@ Description: {project.get('description', 'N/A')}
 ## Task Overview
 - Total: {len(tasks)}
 - Completed: {len(completed)}
-- Progress: {(len(completed) / len(tasks) * 100):.0f}% if tasks else "N/A"}%
+- Progress: {f"{(len(completed) / len(tasks) * 100):.0f}%" if len(tasks) > 0 else "N/A"}
 
 ## Tasks by Priority
 """
@@ -462,9 +459,8 @@ async def main() -> None:
         await startup()
 
         # Run the server
-        async with mcp.run() as streams:
-            logger.info("Task manager MCP server running")
-            await streams.wait()
+        logger.info("Task manager MCP server running")
+        await mcp.run_stdio_async()
     except KeyboardInterrupt:
         logger.info("Received interrupt signal")
     except Exception as e:
