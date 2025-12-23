@@ -33,10 +33,10 @@ agent-patterns/
 │   └── tests/
 │       └── test_server.py
 │
-├── .claude/
+├── .github/
 │   └── skills/
 │       └── task-organizer/
-│           └── SKILL.md               # Claude Agent skill definition
+│           └── SKILL.md               # Claude Agent skill definition (cross-tool)
 │
 ├── sdk-examples/
 │   ├── python/
@@ -135,9 +135,11 @@ npx tsx basic_mcp.ts      # Direct approach
 
 ### For Developers Building Skills
 1. Read [SKILL_GUIDE.md](docs/SKILL_GUIDE.md)
-2. Review `.claude/skills/task-organizer/SKILL.md`
+2. Review `.github/skills/task-organizer/SKILL.md`
 3. Understand skill activation patterns
 4. Practice skill descriptions
+
+**Note**: Skills are stored in `.github/skills/` (cross-tool standard) for compatibility with Claude Code, Copilot MCPcat, and other tools.
 
 ### For SDK Integration
 1. Read [SDK_USAGE.md](docs/SDK_USAGE.md)
