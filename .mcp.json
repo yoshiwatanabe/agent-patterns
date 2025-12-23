@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "task-manager": {
+      "command": "bash",
+      "args": [
+        "-c",
+        "PYTHONPATH=mcp-server/src python3 -m task_manager_mcp.server"
+      ],
+      "env": {},
+      "disabled": false
+    }
+  }
+}

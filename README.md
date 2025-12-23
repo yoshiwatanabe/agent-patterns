@@ -66,11 +66,31 @@ cd mcp-server
 pip install -e .
 ```
 
-### 2. Register with Claude Code
+### 2. Configure MCP Server (Project-Local)
 
+The MCP server is configured in `.mcp.json` at the project root:
+
+```json
+{
+  "mcpServers": {
+    "task-manager": {
+      "command": "bash",
+      "args": ["-c", "PYTHONPATH=mcp-server/src python3 -m task_manager_mcp.server"],
+      "env": {},
+      "disabled": false
+    }
+  }
+}
+```
+
+This configuration is:
+- ✅ **Local to this project** (not global)
+- ✅ **Self-contained** (no external dependencies)
+- ✅ **Shareable** (committed to git)
+
+Verify it's working:
 ```bash
-claude mcp add --transport stdio task-manager \
-  -- python -m task_manager_mcp.server
+claude mcp list
 ```
 
 ### 3. Test in Claude Code CLI
