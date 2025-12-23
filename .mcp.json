@@ -1,12 +1,14 @@
 {
   "mcpServers": {
-    "task-manager": {
+    "task-tracker": {
       "command": "bash",
       "args": [
         "-c",
-        "PYTHONPATH=mcp-server/src python3 -m task_manager_mcp.server"
+        "PYTHONPATH=mcp-server/src python3 -m task_tracker_mcp.server"
       ],
-      "env": {},
+      "env": {
+        "TASK_TRACKER_MCP_PORT": "8000"
+      },
       "disabled": false
     }
   }

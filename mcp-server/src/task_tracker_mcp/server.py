@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FastMCP server for task management system."""
+"""FastMCP server for task tracking system."""
 
 import asyncio
 import json
@@ -20,7 +20,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize FastMCP server
-mcp = FastMCP(name="task-manager")
+mcp = FastMCP(name="task-tracker")
 
 # Initialize database manager
 db_manager = DatabaseManager("tasks.db")
@@ -441,14 +441,14 @@ Total overdue: {len(overdue)}
 
 async def startup() -> None:
     """Initialize database on startup."""
-    logger.info("Starting task manager MCP server...")
+    logger.info("Starting task tracker MCP server...")
     await db_manager.initialize()
     logger.info("Database initialized")
 
 
 async def shutdown() -> None:
     """Close database on shutdown."""
-    logger.info("Shutting down task manager MCP server...")
+    logger.info("Shutting down task tracker MCP server...")
     await db_manager.close()
     logger.info("Database closed")
 
@@ -459,7 +459,7 @@ async def main() -> None:
         await startup()
 
         # Run the server
-        logger.info("Task manager MCP server running")
+        logger.info("Task tracker MCP server running")
         await mcp.run_stdio_async()
     except KeyboardInterrupt:
         logger.info("Received interrupt signal")

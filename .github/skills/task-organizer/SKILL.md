@@ -1,6 +1,6 @@
 ---
 name: task-organizer
-description: Manage tasks, projects, and tags using a SQLite-backed task management system. Use for task creation, project planning, todo lists, task tracking, and productivity workflows.
+description: Track and manage tasks, projects, and tags using a SQLite-backed task tracking system. Use for task creation, project planning, todo lists, and productivity workflows.
 ---
 
 # Task Organizer Skill
@@ -214,4 +214,4 @@ This skill pairs well with:
 
 ---
 
-**Note**: This skill automatically uses the task-manager MCP server. Make sure the MCP server is registered and running for full functionality.
+**Note**: This skill automatically uses the task-tracker MCP server. Make sure the MCP server is registered and running for full functionality.

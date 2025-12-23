@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "task-manager-mcp"
+name = "task-tracker-mcp"
 version = "1.0.0"
-description = "Task Manager MCP Server - A comprehensive task management system via Model Context Protocol"
+description = "Task Tracker MCP Server - A comprehensive task tracking and management system via Model Context Protocol"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
@@ -25,10 +25,10 @@ dev = [
 ]
 
 [project.scripts]
-task-manager-mcp = "task_manager_mcp.server:main"
+task-tracker-mcp = "task_tracker_mcp.server:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/task_manager_mcp"]
+packages = ["src/task_tracker_mcp"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

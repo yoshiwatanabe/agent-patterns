@@ -25,7 +25,7 @@ agent-patterns/
 │
 ├── mcp-server/                        # FastMCP Server Implementation
 │   ├── pyproject.toml                 # Python project config
-│   ├── src/task_manager_mcp/
+│   ├── src/task_tracker_mcp/
 │   │   ├── __init__.py
 │   │   ├── server.py                  # MCP server with 35+ tools
 │   │   ├── database.py                # SQLite operations
@@ -73,10 +73,12 @@ The MCP server is configured in `.mcp.json` at the project root:
 ```json
 {
   "mcpServers": {
-    "task-manager": {
+    "task-tracker": {
       "command": "bash",
-      "args": ["-c", "PYTHONPATH=mcp-server/src python3 -m task_manager_mcp.server"],
-      "env": {},
+      "args": ["-c", "PYTHONPATH=mcp-server/src python3 -m task_tracker_mcp.server"],
+      "env": {
+        "TASK_TRACKER_MCP_PORT": "8000"
+      },
       "disabled": false
     }
   }
@@ -129,7 +131,7 @@ npx tsx basic_mcp.ts      # Direct approach
 
 ### For Developers Building MCP Servers
 1. Read [MCP_SERVER.md](docs/MCP_SERVER.md)
-2. Review `mcp-server/src/task_manager_mcp/server.py`
+2. Review `mcp-server/src/task_tracker_mcp/server.py`
 3. Explore database schema and operations
 4. See [EXAMPLES.md](docs/EXAMPLES.md)
 
@@ -182,7 +184,7 @@ Traditional approach for automation:
 ```python
 # Explicitly call specific tool
 await mcp.call_tool(
-    "mcp__task-manager__filter_tasks",
+    "mcp__task-tracker__filter_tasks",
     {"priority": "high"}
 )
 ```
