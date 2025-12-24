@@ -1,11 +1,21 @@
 ---
 name: readability-scorer
-description: Assess text readability using multiple metrics. Evaluate complexity, sentence structure, vocabulary, and audience appropriateness.
+description: Assess text readability using multiple metrics. Execute Python script for detailed readability analysis. Use when evaluating text complexity, comprehension level, or audience fit.
 ---
 
 # Readability Scorer
 
 I assess how easy text is to read and understand for different audiences.
+
+## How to Use This Skill
+
+When analyzing text readability, execute the readability scorer script:
+
+```bash
+python /home/ywatanabe/dev/agent-patterns/.claude/skills/readability-scorer/run.py "text to analyze"
+```
+
+The script returns JSON results with readability scores, audience fit, and improvement suggestions.
 
 ## What I Measure
 

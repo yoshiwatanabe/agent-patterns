@@ -1,11 +1,21 @@
 ---
 name: grammar-checker
-description: Analyze text for grammar, spelling, punctuation, and style issues. Provide corrections and explanations.
+description: Analyze text for grammar, spelling, punctuation, and style issues. Execute Python script to perform detailed analysis. Use when checking grammar or proofreading.
 ---
 
 # Grammar Checker
 
 I analyze text for language correctness and provide detailed corrections.
+
+## How to Use This Skill
+
+When analyzing text, execute the grammar checker script:
+
+```bash
+python /home/ywatanabe/dev/agent-patterns/.claude/skills/grammar-checker/run.py "text to analyze"
+```
+
+The script returns JSON results with detailed issue analysis.
 
 ## What I Check
 

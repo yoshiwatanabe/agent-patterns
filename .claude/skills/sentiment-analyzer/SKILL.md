@@ -1,11 +1,21 @@
 ---
 name: sentiment-analyzer
-description: Analyze emotional tone, sentiment polarity, and psychological impact of text. Identify mood, attitude, and emotional triggers.
+description: Analyze emotional tone, sentiment polarity, and psychological impact of text. Execute Python script for detailed sentiment analysis. Use when analyzing mood, attitude, or emotional content.
 ---
 
 # Sentiment Analyzer
 
 I analyze the emotional tone and psychological impact of text.
+
+## How to Use This Skill
+
+When analyzing emotional content, execute the sentiment analyzer script:
+
+```bash
+python /home/ywatanabe/dev/agent-patterns/.claude/skills/sentiment-analyzer/run.py "text to analyze"
+```
+
+The script returns JSON results with sentiment scores, detected tones, and emotional themes.
 
 ## What I Analyze
 

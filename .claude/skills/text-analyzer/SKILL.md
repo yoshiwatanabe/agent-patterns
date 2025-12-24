@@ -1,11 +1,26 @@
 ---
 name: text-analyzer
-description: Comprehensive text analysis coordinator. Analyzes documents for grammar, sentiment, readability, and SEO. Delegates to specialized child skills.
+description: Comprehensive text analysis coordinator. Execute Python script for multi-aspect text analysis. Use when you need grammar, sentiment, readability, and SEO analysis combined.
 ---
 
 # Text Analyzer (Parent Skill)
 
 I coordinate comprehensive text analysis by delegating to specialized child skills.
+
+## How to Use This Skill
+
+For comprehensive text analysis, execute the coordinator script:
+
+```bash
+python /home/ywatanabe/dev/agent-patterns/.claude/skills/text-analyzer/run.py "text to analyze"
+```
+
+The script invokes all child skills and returns:
+- Grammar analysis (critical issues, minor issues, style suggestions)
+- Sentiment analysis (polarity, tone, emotional impact)
+- Readability analysis (grade level, audience fit, complexity)
+- SEO analysis (keywords, optimization score, recommendations)
+- Synthesized executive summary with prioritized action items
 
 ## Child Skills I Use
 

@@ -1,11 +1,21 @@
 ---
 name: seo-optimizer
-description: Analyze and optimize text for search engines. Evaluate keyword usage, metadata, structure, and provide SEO recommendations.
+description: Analyze and optimize text for search engines. Execute Python script for detailed SEO analysis. Use when optimizing for keywords, search visibility, or content structure.
 ---
 
 # SEO Optimizer
 
 I analyze text for search engine optimization and provide actionable recommendations.
+
+## How to Use This Skill
+
+When analyzing SEO performance, execute the SEO optimizer script:
+
+```bash
+python /home/ywatanabe/dev/agent-patterns/.claude/skills/seo-optimizer/run.py "text to analyze"
+```
+
+The script returns JSON results with keyword analysis, SEO score, and optimization recommendations.
 
 ## What I Analyze
 
