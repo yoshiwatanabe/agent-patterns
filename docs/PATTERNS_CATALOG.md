@@ -2,31 +2,47 @@
 
 ## Overview
 
-This comprehensive catalog documents all major patterns for integrating Model Context Protocol (MCP) servers with Claude Agent Skills. It serves as a decision-making guide for architects and developers building agent-based systems.
+This catalog focuses specifically on **Skills-centric integration patterns** - patterns where Claude Agent Skills actively orchestrate and coordinate MCP servers to accomplish complex workflows.
 
-**Target Audience**: Advanced developers, architects, and technical leads evaluating integration patterns for custom AI applications.
+**Target Audience**: Developers building intelligent agent systems, particularly those learning how to leverage Skills effectively with MCP.
 
-**Purpose**: Enable informed architectural decisions by providing:
-- Complete pattern descriptions with diagrams
-- Pros/cons analysis for each pattern
-- Complexity and token efficiency metrics
-- Real-world use cases and scenarios
-- Decision frameworks and comparison matrices
+**Focus**: Learn how Skills work and how to adapt MCP and additional Skills effectively
+
+**Purpose**:
+- Understand how Skills drive MCP orchestration
+- Learn pattern progression from simple to complex
+- See real examples of Skill-MCP integration
+- Build skills-focused agent systems
+
+**Note**: For patterns that don't center on Skills orchestration (e.g., direct MCP calls, resource context enrichment), see [PATTERNS_REFERENCE.md](PATTERNS_REFERENCE.md).
 
 ---
 
 ## Quick Pattern Selector
 
-Choose your pattern based on your needs:
+Choose your pattern based on your Skill needs:
 
 ```
-Do you have custom business logic/operations?
-├─ Yes → Do you want automatic invocation?
-│   ├─ Yes → Pattern 1: Skill-Guided MCP Tools ⭐
-│   └─ No → Pattern 6: Direct MCP Usage
-└─ No → Do you need structured guidance?
-    ├─ Yes → Pattern 5: Skill Without Custom MCP
-    └─ No → Use standard Claude Code features
+How should your Skill orchestrate MCP?
+│
+├─ Skill routes to ONE MCP server based on context
+│  └─ Pattern 1: Skill-Guided MCP Tools ⭐ START HERE
+│
+├─ Skill coordinates MULTIPLE MCP servers
+│  ├─ In parallel/mixed? → Pattern 2: Multi-MCP Orchestration
+│  └─ Sequential? → Pattern 8: Data Pipeline
+│
+├─ Skill needs to handle MULTI-TURN conversations
+│  └─ Pattern 7: Stateful Conversation MCP
+│
+├─ Skill should TRIGGER pre-built workflows
+│  └─ Pattern 4: MCP Prompts as Workflows
+│
+├─ Skill coordinates MULTIPLE SKILLS
+│  └─ Pattern 11: Hierarchical Skills
+│
+└─ Skill needs COMPLEX REASONING across steps
+   └─ Pattern 13: Chain-of-Thought with MCP
 ```
 
 ---
@@ -367,85 +383,6 @@ Cost: ~2x single MCP
 
 ---
 
-## Pattern 3: MCP Resources as Context
-
-**Complexity**: Low | **Token Efficiency**: Medium | **Recommended for**: Knowledge-driven systems
-
-### Overview
-
-MCP servers expose read-only resources (documentation, schemas, standards) that provide context to Claude. These resources are loaded as part of the conversation context, helping Claude make better decisions without needing to fetch data dynamically.
-
-### Architecture Diagram
-
-```
-User Request
-    ↓
-Load MCP Resources (read-only)
-    ↓
-@docs:resource://coding-standards
-@db:resource://schema
-    ↓
-Claude (enriched context)
-    ↓
-Educated Decision Making
-    ↓
-Tool invocation (if needed)
-```
-
-### When to Use
-
-✅ **Ideal for**:
-- Knowledge bases (documentation, standards, guidelines)
-- Schema/specification files
-- Configuration references
-- Code generation with style guides
-- Compliance/regulatory requirements
-
-### Characteristics
-
-| Aspect | Rating |
-|--------|--------|
-| **Complexity** | Low |
-| **Token Efficiency** | Medium |
-| **Setup Effort** | Low |
-| **Performance** | Excellent |
-| **Cacheability** | High |
-
-### Pros ✅
-
-- Simple to implement
-- Read-only (no side effects)
-- Highly cacheable
-- Reduces model hallucination
-- Self-documenting via resources
-
-### Cons ❌
-
-- Resource size affects tokens
-- No dynamic computation
-- Must pre-compute all resources
-- Stale resources possible
-
-### Token Usage
-
-```
-Resource loading:    ~200 tokens (cached)
-Context enrichment:  ~100 tokens
-Model reasoning:     ~150 tokens
-Tool usage:          ~100 tokens
-
-Total: ~550 tokens
-Efficiency: High (resources cached)
-```
-
-### Example Use Cases
-
-1. **Code Generation**: Load style guide resources → Generate code matching standards
-2. **Documentation Assistant**: Load API specs → Answer questions with accurate details
-3. **Compliance Checker**: Load regulations → Review documents for compliance
-
----
-
 ## Pattern 4: MCP Prompts as Workflows
 
 **Complexity**: Medium | **Token Efficiency**: High | **Recommended for**: Complex operations
@@ -503,177 +440,6 @@ Complete Report
 
 - Less flexible than building steps dynamically
 - Requires predicting workflows
-
----
-
-## Pattern 5: Skill Without Custom MCP
-
-**Complexity**: Low | **Token Efficiency**: Very High | **Recommended for**: Lean systems
-
-### Overview
-
-Skills provide guidance and instructions without needing custom MCP servers. Skills use built-in Claude Code tools (Read, Write, Bash, Edit, etc.) to guide Claude through workflows.
-
-### Architecture Diagram
-
-```
-User Request
-    ↓
-[Skill Loaded]
-  (Describes best practices and approaches)
-    ↓
-Claude Uses Built-in Tools
-  /      |       \
-Read   Write    Edit
-(and other standard tools)
-    ↓
-Results Achieved
-```
-
-### When to Use
-
-✅ **Ideal for**:
-- File-based operations
-- Code generation/modification
-- Developer assistance tools
-- Documentation generation
-- Project scaffolding
-
-### Characteristics
-
-| Aspect | Rating |
-|--------|--------|
-| **Complexity** | Low |
-| **Token Efficiency** | Very High |
-| **Setup Effort** | Minimal |
-| **Performance** | Excellent |
-| **Scope** | Limited to file operations |
-
-### Pros ✅
-
-- No MCP server needed
-- Very low token overhead
-- Simple to implement
-- Works out of the box
-- Leverages standard tools
-
-### Cons ❌
-
-- Limited to file operations
-- Can't access external systems
-- No custom business logic
-
-### Token Usage
-
-```
-Skill guidance:    ~100 tokens
-Tool instructions: ~50 tokens
-Built-in tools:    ~150 tokens
-
-Total: ~300 tokens
-(Lowest overhead of any pattern)
-```
-
-### Example: Test-Driven Development Skill
-
-```yaml
----
-name: tdd-guide
-description: Follow test-driven development practices using standard tools.
----
-
-# TDD Workflow
-
-1. Write failing test
-   - Use Write tool to create test file
-
-2. Run test
-   - Use Bash to execute tests
-
-3. Implement feature
-   - Use Edit tool to modify code
-
-4. Run tests again
-   - Bash to verify all pass
-```
-
----
-
-## Pattern 6: Direct MCP Usage (No Skill)
-
-**Complexity**: Low | **Token Efficiency**: Very High | **Recommended for**: Automation/scripts
-
-### Overview
-
-Directly call MCP tools without a skill layer. Developer controls which tools are called, when they're called, and with what parameters. No model reasoning overhead.
-
-### Architecture Diagram
-
-```
-Program/Script
-    ↓
-[Direct Tool Calls]
-    ↓
-MCP Server
-    ↓
-Results
-```
-
-### When to Use
-
-✅ **Ideal for**:
-- Automated scripts/cron jobs
-- Known, fixed workflows
-- Internal tools for developers
-- Performance-critical operations
-- Testing/integration scenarios
-
-### Characteristics
-
-| Aspect | Rating |
-|--------|--------|
-| **Complexity** | Very Low |
-| **Token Efficiency** | Excellent |
-| **Setup Effort** | Low |
-| **Performance** | Excellent |
-| **Flexibility** | Low |
-
-### Pros ✅
-
-- Maximum control
-- Minimal token usage
-- Very fast (no model reasoning)
-- Deterministic behavior
-- Easy to debug
-
-### Cons ❌
-
-- Must know tool names/parameters
-- No intelligence
-- Verbose for complex workflows
-- Requires code changes for variations
-
-### Token Usage
-
-```
-Tool specification:  ~50 tokens
-Parameters:         ~30 tokens
-Execution:          ~20 tokens
-
-Total: ~100 tokens
-(Minimal overhead)
-```
-
-### Code Example
-
-```python
-# Traditional programming - no AI reasoning
-result = await mcp.call_tool(
-    "mcp__task-manager__filter_tasks",
-    {"priority": "high", "status": "pending"}
-)
-# Explicit, predictable, efficient
-```
 
 ---
 
@@ -777,68 +543,6 @@ Output Data
 
 ---
 
-## Pattern 9: Hybrid Local + Remote MCP
-
-**Complexity**: High | **Token Efficiency**: Low | **Recommended for**: Mixed infrastructure
-
-### Overview
-
-Combine local STDIO MCP servers with remote HTTP MCP servers in same application.
-
-### When to Use
-
-✅ **Ideal for**:
-- Local data + cloud services
-- On-premise + SaaS integrations
-- Development + production systems
-- Hybrid infrastructure
-
-### Characteristics
-
-| Aspect | Rating |
-|--------|--------|
-| **Complexity** | High |
-| **Latency** | Medium (remote adds latency) |
-| **Reliability** | Medium (dependencies on both) |
-| **Setup** | High |
-
----
-
-## Pattern 10: Security/Authorization Pattern
-
-**Complexity**: High | **Token Efficiency**: Medium | **Recommended for**: Regulated systems
-
-### Overview
-
-MCP servers enforce security policies and authorization checks before executing operations.
-
-### When to Use
-
-✅ **Ideal for**:
-- Healthcare systems (HIPAA)
-- Financial systems (SOX)
-- Government systems (compliance)
-- Sensitive data operations
-- Multi-tenant systems
-
-### Characteristics
-
-| Aspect | Rating |
-|--------|--------|
-| **Complexity** | Very High |
-| **Security** | Excellent |
-| **Overhead** | Medium (auth checks) |
-
-### Security Considerations
-
-- Validate user permissions at MCP level
-- Encrypt sensitive data
-- Audit all operations
-- Rate limit sensitive operations
-- Use skills to enforce policies
-
----
-
 ## Pattern 11: Hierarchical Skills
 
 **Complexity**: Medium | **Token Efficiency**: High | **Recommended for**: Large systems
@@ -867,25 +571,6 @@ Skill1  Skill2  Skill3
 - Multi-domain systems
 - Team-based development
 - Modular architectures
-
----
-
-## Pattern 12: Event-Driven MCP
-
-**Complexity**: Very High | **Token Efficiency**: Low | **Recommended for**: Reactive systems
-
-### Overview
-
-MCP servers monitor events/webhooks and trigger Claude actions based on events.
-
-### When to Use
-
-✅ **Ideal for**:
-- CI/CD automation
-- Real-time monitoring
-- Webhook-based workflows
-- Reactive systems
-- Event processing
 
 ---
 
@@ -926,255 +611,245 @@ Solution
 
 ---
 
-## Pattern 14: Caching + MCP Resources
+## Skills-Centric Pattern Comparison Matrix
 
-**Complexity**: Medium | **Token Efficiency**: Very High | **Recommended for**: Read-heavy systems
-
-### Overview
-
-Cache MCP resources and results to reduce repeated token usage.
-
-### When to Use
-
-✅ **Ideal for**:
-- Reference data (rarely changes)
-- Large resource files
-- High-traffic systems
-- Cost-sensitive applications
-
-### Caching Strategy
-
-```
-Request 1: Load @schema → 200 tokens
-Request 2: Cached @schema → 0 tokens
-Request 3: Cached @schema → 0 tokens
-
-Savings: 400 tokens after first request
-```
+| Pattern | Complexity | Token Efficiency | Skill's Role | Learning Curve |
+|---------|------------|------------------|-------------|-----------------|
+| 1. Skill-Guided MCP Tools | Medium | High | Routes to ONE MCP based on context | Medium |
+| 2. Multi-MCP Orchestration | Very High | Medium | Coordinates MULTIPLE MCP servers | High |
+| 4. MCP Prompts as Workflows | Medium | High | Triggers pre-built MCP workflows | Medium |
+| 7. Stateful Conversation | High | Medium | Manages state across conversation turns | High |
+| 8. Data Pipeline | High | Medium | Orchestrates sequential data flow | High |
+| 11. Hierarchical Skills | Medium | High | Delegates to child skills | Medium |
+| 13. Chain-of-Thought | High | Medium | Guides multi-step reasoning | High |
 
 ---
 
+## Skills-Centric Decision Framework
+
+### Question 1: How many MCP servers should your Skill coordinate?
+
+- **One MCP server** → Pattern 1: Skill-Guided MCP Tools
+  - Skill intelligently routes requests to single MCP
+  - Best for: Task management, single-domain operations
+
+- **Two or more MCP servers** → Pattern 2: Multi-MCP Orchestration
+  - Skill orchestrates calls across multiple MCPs
+  - Best for: Complex workflows needing data from multiple sources
+
+### Question 2: What type of data flow does your Skill need?
+
+- **Real-time responses** → Pattern 1 or 2
+  - Skill makes individual tool calls for each request
+
+- **Sequential/pipeline** → Pattern 8: Data Pipeline
+  - Skill orchestrates data flowing through multiple transformations
+  - Best for: ETL, report generation, data processing
+
+- **Pre-built workflows** → Pattern 4: MCP Prompts as Workflows
+  - Skill triggers complete workflows encoded in MCP
+  - Best for: Complex procedures with fixed steps
+
+### Question 3: Does your Skill need to handle conversation context?
+
+- **Single-turn requests** → Pattern 1, 2, 4, or 8
+  - Each request is independent
+
+- **Multi-turn conversations** → Pattern 7: Stateful Conversation
+  - Skill maintains state across conversation turns
+  - Best for: Iterative design, debugging, refinement
+
+### Question 4: How complex is your skill system?
+
+- **Single Skill** → Pattern 1, 2, 4, 7, 8, or 13
+  - One skill handles orchestration
+
+- **Multiple coordinated Skills** → Pattern 11: Hierarchical Skills
+  - Parent skill delegates to child skills
+  - Best for: Large systems, team development, modular architecture
+
+### Question 5: Does your Skill need complex reasoning?
+
+- **Straightforward logic** → Pattern 1, 2, 4, 8
+  - Direct orchestration without multi-step reasoning
+
+- **Multi-step problem solving** → Pattern 13: Chain-of-Thought
+  - Skill guides reasoning across multiple analysis/design/implement phases
+  - Best for: Architecture design, complex problem solving
+
 ---
 
-## Pattern Comparison Matrix
-
-| Pattern | Complexity | Token Efficiency | Best For | Learning Curve |
-|---------|------------|------------------|----------|-----------------|
-| 1. Skill-Guided MCP | Medium | High | User-facing systems | Medium |
-| 2. Multi-MCP Orchestration | Very High | Medium | Complex integrations | High |
-| 3. MCP Resources as Context | Low | Medium | Knowledge systems | Low |
-| 4. MCP Prompts as Workflows | Medium | High | Complex procedures | Medium |
-| 5. Skill Without Custom MCP | Low | Very High | File operations | Low |
-| 6. Direct MCP Usage | Very Low | Very High | Automation scripts | Very Low |
-| 7. Stateful Conversation | High | Medium | Multi-turn sessions | High |
-| 8. Data Pipeline | High | Medium | ETL processes | High |
-| 9. Hybrid Local + Remote | Very High | Low | Mixed infrastructure | Very High |
-| 10. Security/Authorization | Very High | Medium | Regulated systems | Very High |
-| 11. Hierarchical Skills | Medium | High | Large systems | Medium |
-| 12. Event-Driven MCP | Very High | Low | Reactive systems | Very High |
-| 13. Chain-of-Thought | High | Medium | Complex reasoning | High |
-| 14. Caching + Resources | Medium | Very High | Read-heavy systems | Medium |
-
----
-
-## Decision Framework
-
-### Question 1: Who are your users?
-
-- **End users** → Use Pattern 1 (Skill-Guided MCP)
-- **Developers** → Use Pattern 6 (Direct MCP)
-- **Mix** → Use Pattern 11 (Hierarchical Skills)
-
-### Question 2: How many MCP servers?
-
-- **One** → Use Pattern 1, 3, 4, or 5
-- **Few (2-3)** → Use Pattern 2 (Multi-MCP)
-- **Many (5+)** → Use Pattern 11 (Hierarchical)
-
-### Question 3: What's your priority?
-
-- **Natural language interface** → Pattern 1
-- **Maximum speed** → Pattern 6
-- **Token efficiency** → Pattern 5 or 14
-- **Complex workflows** → Pattern 13
-- **Real-time events** → Pattern 12
-
-### Question 4: What constraints?
-
-- **Regulatory/security** → Pattern 10
-- **Stateful conversations** → Pattern 7
-- **Data transformation** → Pattern 8
-- **Hybrid infrastructure** → Pattern 9
-
----
-
-## Token Efficiency Ranking
+## Skills-Centric Token Efficiency Ranking
 
 From most to least efficient:
 
 ```
-1. Pattern 6 (Direct MCP)           ~100-200 tokens
-2. Pattern 5 (Skill no Custom MCP)  ~300-500 tokens
-3. Pattern 4 (Prompts as Workflows) ~400-600 tokens
-4. Pattern 1 (Skill-Guided MCP)     ~600-1000 tokens
-5. Pattern 3 (Resources as Context) ~500-800 tokens
-6. Pattern 14 (Caching)             ~300-500 tokens (after cache)
-7. Pattern 2 (Multi-MCP)            ~1000-1500 tokens
-8. Pattern 7 (Stateful)             ~700-1200 tokens
-9. Pattern 8 (Data Pipeline)        ~1200-1800 tokens
-10. Pattern 13 (Chain-of-Thought)   ~1500-2500 tokens
+1. Pattern 4 (Prompts as Workflows)  ~400-600 tokens
+2. Pattern 1 (Skill-Guided MCP)      ~600-1000 tokens
+3. Pattern 11 (Hierarchical Skills)  ~600-1000 tokens
+4. Pattern 7 (Stateful Conversation) ~700-1200 tokens
+5. Pattern 8 (Data Pipeline)         ~1200-1800 tokens
+6. Pattern 2 (Multi-MCP)             ~1000-1500 tokens
+7. Pattern 13 (Chain-of-Thought)     ~1500-2500 tokens
 ```
 
 ---
 
-## Complexity Ranking
+## Skills-Centric Complexity Ranking
 
 From simplest to most complex:
 
 ```
-1. Pattern 6 (Direct MCP)
-2. Pattern 5 (Skill no Custom MCP)
-3. Pattern 3 (Resources as Context)
-4. Pattern 4 (Prompts as Workflows)
-5. Pattern 1 (Skill-Guided MCP)
-6. Pattern 14 (Caching + Resources)
-7. Pattern 11 (Hierarchical Skills)
-8. Pattern 7 (Stateful Conversation)
-9. Pattern 8 (Data Pipeline)
-10. Pattern 2 (Multi-MCP Orchestration)
-11. Pattern 13 (Chain-of-Thought)
-12. Pattern 9 (Hybrid Local + Remote)
-13. Pattern 12 (Event-Driven)
-14. Pattern 10 (Security/Authorization)
+1. Pattern 1 (Skill-Guided MCP) - Single MCP, intelligent routing
+2. Pattern 4 (Prompts as Workflows) - Trigger pre-built workflows
+3. Pattern 11 (Hierarchical Skills) - Delegate to child skills
+4. Pattern 7 (Stateful Conversation) - Manage conversation state
+5. Pattern 8 (Data Pipeline) - Orchestrate sequential data flow
+6. Pattern 2 (Multi-MCP Orchestration) - Coordinate multiple MCPs
+7. Pattern 13 (Chain-of-Thought) - Guide multi-step reasoning
 ```
 
 ---
 
-## Architectural Decision Tree
+## Skills-Centric Architectural Decision Tree
 
 ```
-START: "I need to build a system with MCP and Skills"
+START: "I need a Skill to orchestrate MCP servers"
   │
-  ├─ Will end users interact with it directly?
+  ├─ How many MCP servers?
   │  │
-  │  ├─ Yes → Use Pattern 1 (Skill-Guided MCP) ⭐
-  │  │   └─ Provides natural language interface
+  │  ├─ One → Pattern 1: Skill-Guided MCP Tools ⭐ START HERE
+  │  │   └─ Skill intelligently routes to single MCP
+  │  │   └─ Examples: Task manager, single-domain operations
   │  │
-  │  └─ No → Is it a developer tool?
+  │  └─ Multiple → How should data flow?
   │      │
-  │      ├─ Yes, known workflows → Pattern 6 (Direct MCP)
-  │      │   └─ Maximum efficiency
+  │      ├─ Parallel/mixed calls → Pattern 2: Multi-MCP Orchestration
+  │      │   └─ Skill coordinates across servers
+  │      │   └─ Examples: Business logic + analytics, order + shipping
   │      │
-  │      └─ Yes, varied tasks → Pattern 11 (Hierarchical)
-  │          └─ Organize sub-domains
+  │      ├─ Sequential pipeline → Pattern 8: Data Pipeline
+  │      │   └─ Skill orchestrates data transformations
+  │      │   └─ Examples: ETL, report generation, data processing
+  │      │
+  │      └─ Pre-built workflows → Pattern 4: MCP Prompts as Workflows
+  │          └─ Skill triggers complete MCP workflows
+  │          └─ Examples: Complex procedures, best practices
   │
-  ├─ Do you need custom business logic?
+  ├─ Does your Skill need complex structure?
   │  │
-  │  ├─ No → Can you use built-in tools?
-  │  │   │
-  │  │   ├─ Yes → Pattern 5 (Skill without Custom MCP)
-  │  │   │   └─ Minimal complexity
-  │  │   │
-  │  │   └─ No → Pattern 3 (Resources as Context)
-  │  │       └─ Use knowledge resources
+  │  ├─ No, single skill → Continue with patterns above
   │  │
-  │  └─ Yes → Multiple servers needed?
-  │      │
-  │      ├─ No → Pattern 1 (Skill-Guided)
-  │      │   └─ Single server, intelligent routing
-  │      │
-  │      └─ Yes → Orchestration complexity?
-  │          │
-  │          ├─ Sequential → Pattern 8 (Data Pipeline)
-  │          │   └─ ETL-style processing
-  │          │
-  │          └─ Parallel → Pattern 2 (Multi-MCP)
-  │              └─ Coordinate multiple servers
+  │  └─ Yes, multiple skills → Pattern 11: Hierarchical Skills
+  │      └─ Parent skill delegates to child skills
+  │      └─ Examples: Large systems, team development
   │
-  └─ Special requirements?
+  ├─ Does your Skill handle conversations?
+  │  │
+  │  ├─ Single-turn requests → Use pattern selected above
+  │  │
+  │  └─ Multi-turn interactions → Pattern 7: Stateful Conversation
+  │      └─ Skill maintains state across turns
+  │      └─ Examples: Iterative design, debugging sessions
+  │
+  └─ Does your Skill need complex reasoning?
      │
-     ├─ Regulatory compliance → Pattern 10
-     ├─ Real-time events → Pattern 12
-     ├─ Complex reasoning → Pattern 13
-     ├─ Multi-turn sessions → Pattern 7
-     ├─ Read-heavy operations → Pattern 14 (Caching)
-     └─ Mixed infrastructure → Pattern 9
+     ├─ Straightforward logic → Use pattern selected above
+     │
+     └─ Multi-step problem solving → Pattern 13: Chain-of-Thought
+         └─ Skill guides reasoning phases (analyze → design → implement → verify)
+         └─ Examples: Architecture design, complex problem solving
 ```
 
 ---
 
-## Implementation Roadmap
+## Skills-Centric Implementation Roadmap
 
-### Phase 1: Foundation (Weeks 1-2)
+### Phase 1: Foundations (Start here)
 
-Start with simplest patterns:
-1. **Pattern 6** (Direct MCP) - Get comfortable with tool calls
-2. **Pattern 5** (Skill without Custom MCP) - Add skill layer
-3. **Pattern 3** (Resources as Context) - Provide knowledge
+Master single-skill, single-MCP patterns:
+1. **Pattern 1** (Skill-Guided MCP Tools)
+   - Learn: How Skills route requests to MCP tools
+   - Build: Simple task manager or single-domain skill
+   - Example: task-organizer skill we already have
 
-### Phase 2: Intelligence (Weeks 3-4)
+### Phase 2: Single Skill, Multiple MCPs
 
-Add automatic intelligence:
-1. **Pattern 1** (Skill-Guided MCP) - Natural language routing
-2. **Pattern 4** (Prompts as Workflows) - Encode complex procedures
+Expand to coordinating multiple servers:
+1. **Pattern 2** (Multi-MCP Orchestration)
+   - Learn: How Skills coordinate across MCP servers
+   - Build: Skill that uses 2-3 MCPs together
+   - Example: ecommerce-orchestration (what we just built!)
 
-### Phase 3: Scale (Weeks 5-8)
+2. **Pattern 4** (MCP Prompts as Workflows)
+   - Learn: How to trigger pre-built workflows from Skills
+   - Build: Add MCP prompts that Skills invoke
 
-Handle complexity:
-1. **Pattern 2** (Multi-MCP) - Coordinate multiple servers
-2. **Pattern 11** (Hierarchical) - Organize large systems
-3. **Pattern 8** (Data Pipeline) - Process data flows
+### Phase 3: Advanced Single Skill
 
-### Phase 4: Advanced (Weeks 9+)
+Add sophistication to single skill:
+1. **Pattern 7** (Stateful Conversation)
+   - Learn: Maintain context across conversation turns
+   - Build: Debug or iterative design workflows
 
-Specialized patterns:
-1. **Pattern 7** (Stateful) - Persistent conversations
-2. **Pattern 13** (Chain-of-Thought) - Complex reasoning
-3. **Pattern 10** (Security) - Compliance and authorization
+2. **Pattern 13** (Chain-of-Thought)
+   - Learn: Guide multi-step reasoning in Skills
+   - Build: Architecture design or complex problem-solving skill
+
+### Phase 4: Multiple Skills and Pipelines
+
+Scale across many skills:
+1. **Pattern 11** (Hierarchical Skills)
+   - Learn: Parent-child skill delegation
+   - Build: Large systems with specialized sub-skills
+
+2. **Pattern 8** (Data Pipeline)
+   - Learn: Sequential data orchestration
+   - Build: ETL or data processing workflows
 
 ---
 
 ## Common Pitfalls and Solutions
 
-### Pitfall 1: Overcomplicating Pattern Selection
+### Pitfall 1: Vague Skill Activation Triggers
 
-❌ **Wrong**: "We might need 10 MCP servers someday, so build Pattern 2 now"
+❌ **Wrong**: "Manages stuff" - Too vague, Claude won't know when to activate
 
-✅ **Right**: Start with Pattern 1, refactor to Pattern 2 only when you have actual multiple servers
+✅ **Right**: "Process customer returns. Check eligibility, calculate refunds, route for fulfillment." - Specific keywords trigger the skill
 
-**Lesson**: Don't over-engineer. Start simple, scale as needed.
+**Lesson**: Skill descriptions and "When This Skill Activates" sections are critical. Be explicit about activation triggers.
 
-### Pitfall 2: Ignoring Token Costs
+### Pitfall 2: Poor Skill-MCP Orchestration Documentation
 
-❌ **Wrong**: Using Pattern 13 (2000+ tokens) for simple operations
+❌ **Wrong**: Skill describes what it does, but no clear steps for how it coordinates MCPs
 
-✅ **Right**: Use Pattern 6 (100 tokens) for known workflows
+✅ **Right**: Skill explicitly documents orchestration steps (e.g., "Create task → Check policy → Update task")
 
-**Lesson**: Match pattern complexity to problem complexity. Simplest solution wins.
+**Lesson**: Skills should document HOW they orchestrate, not just WHAT they do. See ecommerce-orchestration for an example.
 
-### Pitfall 3: Poor Skill Descriptions
+### Pitfall 3: Assuming All MCP Calls Succeed
 
-❌ **Wrong**: "Manages stuff" (vague, Claude won't activate)
+❌ **Wrong**: Skill orchestrates 3 MCP calls assuming all succeed
 
-✅ **Right**: "Manage tasks and projects. Create, update, filter, and track tasks. Use for task creation, project planning, and productivity." (specific, triggers correctly)
+✅ **Right**: Handle partial failures, provide fallbacks, clear error messages
 
-**Lesson**: Skill descriptions are critical. Invest time in good writing.
+**Lesson**: Real systems fail. Skills must handle failures gracefully and inform the user.
 
-### Pitfall 4: Missing Error Handling
+### Pitfall 4: Overcomplicating Too Early
 
-❌ **Wrong**: Assume all MCP calls succeed
+❌ **Wrong**: "We might need stateful conversations someday, so build Pattern 7 now"
 
-✅ **Right**: Implement fallbacks, retries, and clear error messages
+✅ **Right**: Start with Pattern 1, refactor to Pattern 7 only when you actually need conversation state
 
-**Lesson**: Real systems fail. Handle failures gracefully.
+**Lesson**: Don't over-engineer. Start with simplest pattern (1), scale as needed.
 
-### Pitfall 5: Ignoring Performance
+### Pitfall 5: Ignoring Token Costs in Skills
 
-❌ **Wrong**: Serializing everything, loading all resources
+❌ **Wrong**: Using Pattern 13 (complex reasoning, 2000+ tokens) for simple operations
 
-✅ **Right**: Parallelize where possible, cache resources, paginate results
+✅ **Right**: Use Pattern 1 (600-1000 tokens) for straightforward routing
 
-**Lesson**: Performance matters. Monitor and optimize.
+**Lesson**: Match pattern complexity to problem complexity. Simpler skills = lower cost.
 
 ---
 
@@ -1215,17 +890,37 @@ Cost Metrics:
 
 ## Conclusion
 
-The pattern you choose should match your specific requirements:
+This catalog focuses on **how Skills actively orchestrate MCP servers** to build intelligent agent systems.
 
-- **User-facing**: Pattern 1 (Skill-Guided MCP)
-- **Automation**: Pattern 6 (Direct MCP)
-- **Knowledge-driven**: Pattern 3 (Resources as Context)
-- **Complex workflows**: Pattern 13 (Chain-of-Thought)
-- **Large systems**: Pattern 11 (Hierarchical Skills)
+**Key Takeaways**:
 
-Start simple. Scale as needed. Measure and optimize continuously.
+1. **Start with Pattern 1** (Skill-Guided MCP Tools)
+   - Learn how Skills route requests to MCP tools
+   - Foundation for all other patterns
 
-Remember: **The best pattern is the simplest one that solves your problem.**
+2. **Graduate to Pattern 2** (Multi-MCP Orchestration) when you need multiple servers
+   - Learn how Skills coordinate complex workflows
+   - Real-world systems often need this pattern
+
+3. **Add sophistication as needed**
+   - Pattern 4: Trigger pre-built workflows
+   - Pattern 7: Handle multi-turn conversations
+   - Pattern 13: Guide complex reasoning
+   - Pattern 11: Scale with multiple skills
+   - Pattern 8: Build data pipelines
+
+4. **Document your Skills effectively**
+   - "When This Skill Activates" section is critical
+   - Document orchestration steps explicitly
+   - Show how the Skill uses MCP servers
+
+**Remember**:
+- Start simple. Scale as needed.
+- The best pattern is the simplest one that solves your problem.
+- Focus on how the Skill orchestrates, not just what it does.
+
+**Your learning journey**:
+Pattern 1 → Pattern 2 → (Pattern 4 or 7) → (Pattern 13 or 11) → Pattern 8
 
 ---
 
