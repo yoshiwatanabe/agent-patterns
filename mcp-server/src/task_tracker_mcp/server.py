@@ -6,6 +6,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Optional
 
 from mcp.server.fastmcp import FastMCP
 
@@ -85,12 +86,31 @@ async def list_tasks(limit: int = 50, offset: int = 0) -> str:
 
 
 @mcp.tool()
-async def update_task(task_id: int, **kwargs) -> str:
+async def update_task(
+    task_id: int,
+    title: Optional[str] = None,
+    description: Optional[str] = None,
+    status: Optional[str] = None,
+    priority: Optional[str] = None,
+    due_date: Optional[str] = None,
+) -> str:
     """Update a task by ID.
 
     Supported fields: title, description, status, priority, due_date
     """
     try:
+        kwargs = {}
+        if title is not None:
+            kwargs["title"] = title
+        if description is not None:
+            kwargs["description"] = description
+        if status is not None:
+            kwargs["status"] = status
+        if priority is not None:
+            kwargs["priority"] = priority
+        if due_date is not None:
+            kwargs["due_date"] = due_date
+
         task = await db_manager.update_task(task_id, **kwargs)
         if not task:
             return f"Task {task_id} not found"
@@ -172,9 +192,19 @@ async def list_projects() -> str:
 
 
 @mcp.tool()
-async def update_project(project_id: int, **kwargs) -> str:
+async def update_project(
+    project_id: int,
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+) -> str:
     """Update a project."""
     try:
+        kwargs = {}
+        if name is not None:
+            kwargs["name"] = name
+        if description is not None:
+            kwargs["description"] = description
+
         project = await db_manager.update_project(project_id, **kwargs)
         if not project:
             return f"Project {project_id} not found"
