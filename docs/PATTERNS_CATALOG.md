@@ -30,19 +30,19 @@ How should your Skill orchestrate MCP?
 │
 ├─ Skill coordinates MULTIPLE MCP servers
 │  ├─ In parallel/mixed? → Pattern 2: Multi-MCP Orchestration
-│  └─ Sequential? → Pattern 8: Data Pipeline
-│
-├─ Skill needs to handle MULTI-TURN conversations
-│  └─ Pattern 7: Stateful Conversation MCP
+│  └─ Sequential? → Pattern 5: Data Pipeline
 │
 ├─ Skill should TRIGGER pre-built workflows
-│  └─ Pattern 4: MCP Prompts as Workflows
+│  └─ Pattern 3: MCP Prompts as Workflows
 │
 ├─ Skill coordinates MULTIPLE SKILLS
-│  └─ Pattern 11: Hierarchical Skills
+│  └─ Pattern 6: Hierarchical Skills
+│
+├─ Skill needs to handle MULTI-TURN conversations
+│  └─ Pattern 4: Stateful Conversation MCP
 │
 └─ Skill needs COMPLEX REASONING across steps
-   └─ Pattern 13: Chain-of-Thought with MCP
+   └─ Pattern 7: Chain-of-Thought with MCP
 ```
 
 ---
@@ -383,7 +383,7 @@ Cost: ~2x single MCP
 
 ---
 
-## Pattern 4: MCP Prompts as Workflows
+## Pattern 3: MCP Prompts as Workflows
 
 **Complexity**: Medium | **Token Efficiency**: High | **Recommended for**: Complex operations
 
@@ -443,7 +443,7 @@ Complete Report
 
 ---
 
-## Pattern 7: Stateful Conversation MCP
+## Pattern 3: Stateful Conversation MCP
 
 **Complexity**: High | **Token Efficiency**: Medium | **Recommended for**: Long conversations
 
@@ -499,7 +499,7 @@ Turn 3+: Continue with preserved context
 
 ---
 
-## Pattern 8: Data Pipeline Pattern
+## Pattern 5: Data Pipeline Pattern
 
 **Complexity**: High | **Token Efficiency**: Medium | **Recommended for**: ETL/data processing
 
@@ -543,7 +543,7 @@ Output Data
 
 ---
 
-## Pattern 11: Hierarchical Skills
+## Pattern 6: Hierarchical Skills
 
 **Complexity**: Medium | **Token Efficiency**: High | **Recommended for**: Large systems
 
@@ -574,7 +574,7 @@ Skill1  Skill2  Skill3
 
 ---
 
-## Pattern 13: Chain-of-Thought with MCP
+## Pattern 3: Chain-of-Thought with MCP
 
 **Complexity**: High | **Token Efficiency**: Medium | **Recommended for**: Complex reasoning
 
@@ -617,11 +617,11 @@ Solution
 |---------|------------|------------------|-------------|-----------------|
 | 1. Skill-Guided MCP Tools | Medium | High | Routes to ONE MCP based on context | Medium |
 | 2. Multi-MCP Orchestration | Very High | Medium | Coordinates MULTIPLE MCP servers | High |
-| 4. MCP Prompts as Workflows | Medium | High | Triggers pre-built MCP workflows | Medium |
-| 7. Stateful Conversation | High | Medium | Manages state across conversation turns | High |
-| 8. Data Pipeline | High | Medium | Orchestrates sequential data flow | High |
-| 11. Hierarchical Skills | Medium | High | Delegates to child skills | Medium |
-| 13. Chain-of-Thought | High | Medium | Guides multi-step reasoning | High |
+| 3. MCP Prompts as Workflows | Medium | High | Triggers pre-built MCP workflows | Medium |
+| 4. Stateful Conversation | High | Medium | Manages state across conversation turns | High |
+| 5. Data Pipeline | High | Medium | Orchestrates sequential data flow | High |
+| 6. Hierarchical Skills | Medium | High | Delegates to child skills | Medium |
+| 7. Chain-of-Thought | High | Medium | Guides multi-step reasoning | High |
 
 ---
 
@@ -642,11 +642,11 @@ Solution
 - **Real-time responses** → Pattern 1 or 2
   - Skill makes individual tool calls for each request
 
-- **Sequential/pipeline** → Pattern 8: Data Pipeline
+- **Sequential/pipeline** → Pattern 5: Data Pipeline
   - Skill orchestrates data flowing through multiple transformations
   - Best for: ETL, report generation, data processing
 
-- **Pre-built workflows** → Pattern 4: MCP Prompts as Workflows
+- **Pre-built workflows** → Pattern 3: MCP Prompts as Workflows
   - Skill triggers complete workflows encoded in MCP
   - Best for: Complex procedures with fixed steps
 
@@ -655,7 +655,7 @@ Solution
 - **Single-turn requests** → Pattern 1, 2, 4, or 8
   - Each request is independent
 
-- **Multi-turn conversations** → Pattern 7: Stateful Conversation
+- **Multi-turn conversations** → Pattern 3: Stateful Conversation
   - Skill maintains state across conversation turns
   - Best for: Iterative design, debugging, refinement
 
@@ -664,7 +664,7 @@ Solution
 - **Single Skill** → Pattern 1, 2, 4, 7, 8, or 13
   - One skill handles orchestration
 
-- **Multiple coordinated Skills** → Pattern 11: Hierarchical Skills
+- **Multiple coordinated Skills** → Pattern 6: Hierarchical Skills
   - Parent skill delegates to child skills
   - Best for: Large systems, team development, modular architecture
 
@@ -673,7 +673,7 @@ Solution
 - **Straightforward logic** → Pattern 1, 2, 4, 8
   - Direct orchestration without multi-step reasoning
 
-- **Multi-step problem solving** → Pattern 13: Chain-of-Thought
+- **Multi-step problem solving** → Pattern 3: Chain-of-Thought
   - Skill guides reasoning across multiple analysis/design/implement phases
   - Best for: Architecture design, complex problem solving
 
@@ -684,13 +684,13 @@ Solution
 From most to least efficient:
 
 ```
-1. Pattern 4 (Prompts as Workflows)  ~400-600 tokens
+1. Pattern 3 (Prompts as Workflows)  ~400-600 tokens
 2. Pattern 1 (Skill-Guided MCP)      ~600-1000 tokens
-3. Pattern 11 (Hierarchical Skills)  ~600-1000 tokens
-4. Pattern 7 (Stateful Conversation) ~700-1200 tokens
-5. Pattern 8 (Data Pipeline)         ~1200-1800 tokens
+3. Pattern 6 (Hierarchical Skills)   ~600-1000 tokens
+4. Pattern 4 (Stateful Conversation) ~700-1200 tokens
+5. Pattern 5 (Data Pipeline)         ~1200-1800 tokens
 6. Pattern 2 (Multi-MCP)             ~1000-1500 tokens
-7. Pattern 13 (Chain-of-Thought)     ~1500-2500 tokens
+7. Pattern 7 (Chain-of-Thought)      ~1500-2500 tokens
 ```
 
 ---
@@ -701,12 +701,12 @@ From simplest to most complex:
 
 ```
 1. Pattern 1 (Skill-Guided MCP) - Single MCP, intelligent routing
-2. Pattern 4 (Prompts as Workflows) - Trigger pre-built workflows
-3. Pattern 11 (Hierarchical Skills) - Delegate to child skills
-4. Pattern 7 (Stateful Conversation) - Manage conversation state
-5. Pattern 8 (Data Pipeline) - Orchestrate sequential data flow
+2. Pattern 3 (Prompts as Workflows) - Trigger pre-built workflows
+3. Pattern 6 (Hierarchical Skills) - Delegate to child skills
+4. Pattern 4 (Stateful Conversation) - Manage conversation state
+5. Pattern 5 (Data Pipeline) - Orchestrate sequential data flow
 6. Pattern 2 (Multi-MCP Orchestration) - Coordinate multiple MCPs
-7. Pattern 13 (Chain-of-Thought) - Guide multi-step reasoning
+7. Pattern 7 (Chain-of-Thought) - Guide multi-step reasoning
 ```
 
 ---
@@ -728,11 +728,11 @@ START: "I need a Skill to orchestrate MCP servers"
   │      │   └─ Skill coordinates across servers
   │      │   └─ Examples: Business logic + analytics, order + shipping
   │      │
-  │      ├─ Sequential pipeline → Pattern 8: Data Pipeline
+  │      ├─ Sequential pipeline → Pattern 5: Data Pipeline
   │      │   └─ Skill orchestrates data transformations
   │      │   └─ Examples: ETL, report generation, data processing
   │      │
-  │      └─ Pre-built workflows → Pattern 4: MCP Prompts as Workflows
+  │      └─ Pre-built workflows → Pattern 3: MCP Prompts as Workflows
   │          └─ Skill triggers complete MCP workflows
   │          └─ Examples: Complex procedures, best practices
   │
@@ -740,7 +740,7 @@ START: "I need a Skill to orchestrate MCP servers"
   │  │
   │  ├─ No, single skill → Continue with patterns above
   │  │
-  │  └─ Yes, multiple skills → Pattern 11: Hierarchical Skills
+  │  └─ Yes, multiple skills → Pattern 6: Hierarchical Skills
   │      └─ Parent skill delegates to child skills
   │      └─ Examples: Large systems, team development
   │
@@ -748,7 +748,7 @@ START: "I need a Skill to orchestrate MCP servers"
   │  │
   │  ├─ Single-turn requests → Use pattern selected above
   │  │
-  │  └─ Multi-turn interactions → Pattern 7: Stateful Conversation
+  │  └─ Multi-turn interactions → Pattern 4: Stateful Conversation
   │      └─ Skill maintains state across turns
   │      └─ Examples: Iterative design, debugging sessions
   │
@@ -756,7 +756,7 @@ START: "I need a Skill to orchestrate MCP servers"
      │
      ├─ Straightforward logic → Use pattern selected above
      │
-     └─ Multi-step problem solving → Pattern 13: Chain-of-Thought
+     └─ Multi-step problem solving → Pattern 7: Chain-of-Thought
          └─ Skill guides reasoning phases (analyze → design → implement → verify)
          └─ Examples: Architecture design, complex problem solving
 ```
@@ -779,31 +779,31 @@ Expand to coordinating multiple servers:
 1. **Pattern 2** (Multi-MCP Orchestration)
    - Learn: How Skills coordinate across MCP servers
    - Build: Skill that uses 2-3 MCPs together
-   - Example: ecommerce-orchestration (what we just built!)
+   - Example: ecommerce-orchestration (Pattern 2 - what we just built!)
 
-2. **Pattern 4** (MCP Prompts as Workflows)
+2. **Pattern 3** (MCP Prompts as Workflows)
    - Learn: How to trigger pre-built workflows from Skills
    - Build: Add MCP prompts that Skills invoke
 
 ### Phase 3: Advanced Single Skill
 
 Add sophistication to single skill:
-1. **Pattern 7** (Stateful Conversation)
+1. **Pattern 4** (Stateful Conversation)
    - Learn: Maintain context across conversation turns
    - Build: Debug or iterative design workflows
 
-2. **Pattern 13** (Chain-of-Thought)
+2. **Pattern 7** (Chain-of-Thought)
    - Learn: Guide multi-step reasoning in Skills
    - Build: Architecture design or complex problem-solving skill
 
 ### Phase 4: Multiple Skills and Pipelines
 
 Scale across many skills:
-1. **Pattern 11** (Hierarchical Skills)
+1. **Pattern 6** (Hierarchical Skills)
    - Learn: Parent-child skill delegation
    - Build: Large systems with specialized sub-skills
 
-2. **Pattern 8** (Data Pipeline)
+2. **Pattern 5** (Data Pipeline)
    - Learn: Sequential data orchestration
    - Build: ETL or data processing workflows
 
@@ -903,11 +903,11 @@ This catalog focuses on **how Skills actively orchestrate MCP servers** to build
    - Real-world systems often need this pattern
 
 3. **Add sophistication as needed**
-   - Pattern 4: Trigger pre-built workflows
-   - Pattern 7: Handle multi-turn conversations
-   - Pattern 13: Guide complex reasoning
-   - Pattern 11: Scale with multiple skills
-   - Pattern 8: Build data pipelines
+   - Pattern 3: Trigger pre-built workflows
+   - Pattern 4: Handle multi-turn conversations
+   - Pattern 7: Guide complex reasoning
+   - Pattern 6: Scale with multiple skills
+   - Pattern 5: Build data pipelines
 
 4. **Document your Skills effectively**
    - "When This Skill Activates" section is critical
@@ -920,7 +920,7 @@ This catalog focuses on **how Skills actively orchestrate MCP servers** to build
 - Focus on how the Skill orchestrates, not just what it does.
 
 **Your learning journey**:
-Pattern 1 → Pattern 2 → (Pattern 4 or 7) → (Pattern 13 or 11) → Pattern 8
+Pattern 1 → Pattern 2 → (Pattern 3 or 4) → (Pattern 7 or 6) → Pattern 5
 
 ---
 
