@@ -10,6 +10,17 @@
         "TASK_TRACKER_MCP_PORT": "8000"
       },
       "disabled": false
+    },
+    "business-rules": {
+      "command": "bash",
+      "args": [
+        "-c",
+        "PYTHONPATH=business-rules-mcp/src python3 -m business_rules_mcp.server"
+      ],
+      "env": {
+        "BUSINESS_RULES_PORT": "8001"
+      },
+      "disabled": false
     }
   }
 }
